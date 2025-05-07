@@ -11,22 +11,30 @@ class piece:
         self.pos = pygame.Vector2(position)
         self.size = pygame.Vector2(Size)
         self.isAlive = True
+        self.PawnBox = pygame.Rect(self.pos, self.size)
+    
 
     def draw(self, screen):
         raise NotImplementedError("must be overridden by subclass")
 
-class BluePawn(piece):
+class Pawn(piece):
     def __init__(self, position, Size):
         super().__init__(position, Size)
+
+    def BlueMove(self, mxpos, mypos, mouseDown):
+        if self.PawnBox.collidepoint(mxpos, mypos) and mouseDown:
+            self.pos.y = self.pos.y - 100
+            return True
     
-    def draw(self, screen):
+    def BlueDraw(self, screen):#, mxpos, mypos, mouseDown):
         screen.blit(BluePawnPiece, (self.pos))
 
-class BlackPawn(piece):
-    def __init__(self, position, Size):
-        super().__init__(position, Size)
-    
-    def draw(self, screen):
+    def BlackMove(self, mxpos, mypos, mouseDown):
+        if self.PawnBox.collidepoint(mxpos, mypos) and mouseDown:
+            self.pos.y = self.pos.y + 100
+            return True
+
+    def Blackdraw(self, screen):
         screen.blit(BlackPawnPiece, (self.pos))
 
 
