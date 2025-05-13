@@ -62,13 +62,12 @@ def main():
         #physics---------------------------------------------------
         if turn == "Blue":
             for i in BluePawns:
-                i.BlueMove(mouseX, mouseY, mouseDown)
-                if i.BlueMove(mouseX, mouseY, mouseDown):
+                #i.BlueCaptures(mouseX, mouseY, mouseDown, BlackPawns)
+                if i.BlueMove(mouseX, mouseY, mouseDown, BlackPawns):
                     turn = "Black"
         if turn == "Black":
             for i in BlackPawns:
-                i.BlackMove(mouseX, mouseY, mouseDown)
-                if i.BlackMove(mouseX, mouseY, mouseDown):
+                if i.BlackMove(mouseX, mouseY, mouseDown, BluePawns):
                     turn = "Blue"
         #Render section
        
@@ -93,4 +92,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-
