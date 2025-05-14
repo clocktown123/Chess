@@ -1,7 +1,7 @@
 import pygame
 import sys
 from map import Map
-from pieces import Pawn
+from pieces import Pawn, Bishop
 
 
 
@@ -18,6 +18,8 @@ def main():
     #pieces
     BluePawns = [Pawn((10,600), (80, 80)), Pawn((110,600), (80, 80)), Pawn((210,600), (80, 80)), Pawn((310,600), (80, 80)), Pawn((410,600), (80, 80)), Pawn((510,600), (80, 80)), Pawn((610,600), (80, 80)), Pawn((710,600), (80, 80))]
     BlackPawns = [Pawn((10,100), (80, 80)), Pawn((110,100), (80, 80)), Pawn((210,100), (80, 80)), Pawn((310,100), (80, 80)), Pawn((410,100), (80, 80)), Pawn((510,100), (80, 80)), Pawn((610,100), (80, 80)), Pawn((710,100), (80, 80))]
+    BlueBishops = [Bishop((200, 700), (80, 96)), Bishop((500, 700), (80, 96))]
+    BlackBishops = [Bishop((200, 0), (80, 96)), Bishop((500, 0), (80, 96))]
     #Mouse variables
     mxpos = 0
     mypos = 0
@@ -58,7 +60,7 @@ def main():
 
 
 
-        print(BluePawns[0].PawnBox)
+        #print(BluePawns[0].PawnBox)
         #physics---------------------------------------------------
         if turn == "Blue":
             for i in BluePawns:
@@ -80,6 +82,11 @@ def main():
             i.BlueDraw(screen)
         for i in BlackPawns:
             i.Blackdraw(screen)
+
+        for j in BlueBishops:
+            j.BlueDraw(screen)
+        for j in BlackBishops:
+            j.BlackDraw(screen)
 
 
         pygame.display.flip()
