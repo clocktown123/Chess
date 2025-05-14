@@ -1,10 +1,24 @@
 import pygame
 
-BluePawnPiece = pygame.image.load("BluePawn.png")
+import sys
+import os
+
+def resource_path(relative_path):
+    """Get absolute path to resource, works for dev and PyInstaller"""
+    base_path = getattr(sys, '_MEIPASS', os.path.dirname(__file__))
+    return os.path.join(base_path, relative_path)
+
+BluePawnPiece = pygame.image.load(resource_path("ChessImages/BluePawn.png"))
 BluePawnPiece.set_colorkey((255, 0, 255)) #this makes bright pink (255, 0, 255) transparent (sort of)
 
-BlackPawnPiece = pygame.image.load("BlackPawn.png")
+BlackPawnPiece = pygame.image.load(resource_path("ChessImages/BlackPawn.png"))
 BlackPawnPiece.set_colorkey((255, 0, 255)) #this makes bright pink (255, 0, 255) transparent (sort of)
+
+BlueBishop = pygame.image.load(resource_path("ChessImages/BlueBishop.png"))
+BlueBishop.set_colorkey((255, 0, 255)) #this makes bright pink (255, 0, 255) transparent (sort of)
+
+BlackBishop = pygame.image.load(resource_path("ChessImages/BlackBishop.png"))
+BlackBishop.set_colorkey((255, 0, 255)) #this makes bright pink (255, 0, 255) transparent (sort of)
 
 class piece:
     def __init__(self, position, Size):
@@ -124,3 +138,23 @@ class Pawn(piece):
             screen.blit(BlackPawnPiece, self.pos)
                 
 
+class Bishop(piece):
+    def __init__(self, position, Size):
+        super().__init__(position, Size)
+        self.BishopBox = pygame.Rect(self.pos, self.size)
+
+    def update_rect(self):
+        self.BishopBox = pygame.Rect(self.pos, self.size)
+
+    def BlueDraw(self, screen):
+        self.update_rect()
+        if self.isAlive:
+            screen.blit(BlueBishop, (self.pos.x + 10, self.pos.y))
+    
+    def BlueMove(self, mxpos, mypos, MousePos,  enemies):
+        pass
+
+    def BlackDraw(self, screen):
+        self.update_rect()
+        if self.isAlive:
+            screen.blit(BlackBishop, (self.pos.x + 10, self.pos.y))
