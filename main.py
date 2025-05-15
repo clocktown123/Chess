@@ -66,11 +66,19 @@ def main():
             for i in BluePawns:
                 #i.BlueCaptures(mouseX, mouseY, mouseDown, BlackPawns)
                 if i.BlueMove(mouseX, mouseY, mouseDown, BlackPawns):
+                    for j in BluePawns:
+                        if j != i:
+                            j.selecting = False
                     turn = "Black"
+                    break
         if turn == "Black":
             for i in BlackPawns:
                 if i.BlackMove(mouseX, mouseY, mouseDown, BluePawns):
+                    for j in BlackPawns:
+                        if j != i:
+                            j.selecting = False
                     turn = "Blue"
+                    break
         #Render section
        
         screen.fill((0, 0, 0))
