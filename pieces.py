@@ -28,6 +28,7 @@ class piece:
         self.PawnBox = pygame.Rect(self.pos, self.size)
         self.selecting = False
         self.wait = False
+        
     
 
     def draw(self, screen):
@@ -38,99 +39,120 @@ class Pawn(piece):
         super().__init__(position, Size)
         self.FirstMove = True
         self.selected = False
+        self.MF = True
 
     def update_rect(self):
         self.PawnBox = pygame.Rect(self.pos, self.size)
+        self.BlueEnemyCheck = pygame.Rect(self.pos.x, self.pos.y - 100, 100, 100)
+        self.BlackEnemyCheck = pygame.Rect(self.pos.x, self.pos.y + 100, 100, 100)
+
+    #blue pawn------------------------------------------------
 
     def BlueMove(self, mxpos, mypos, mouseDown, enemies):
         self.update_rect()
-        if self.PawnBox.collidepoint(mxpos, mypos) and mouseDown:
-            self.selected = True
-            return False
-
-        if self.selected and mouseDown:
-            # Move one step forward
-            self.one_step = pygame.Rect(self.pos.x, self.pos.y - 100, self.size.x, self.size.y)
-            self.two_step = pygame.Rect(self.pos.x, self.pos.y - 200, self.size.x, self.size.y)
-            self.TopLeft = pygame.Rect(self.pos.x-100, self.pos.y-100, 100, 100)
-            self.TopRight = pygame.Rect(self.pos.x+100, self.pos.y-100, 100, 100)
-
+        if self.isAlive:
+            if self.PawnBox.collidepoint(mxpos, mypos) and mouseDown:
+                self.selected = True
+                return False
+            
             for i in enemies:
-                if i.PawnBox.colliderect(self.TopLeft):
-                    if self.TopLeft.collidepoint(mxpos, mypos) and mouseDown:
-                        self.pos.y -= 100
-                        self.pos.x -= 100
-                        self.selected = False
-                        i.isAlive = False
-                        return True
+                if i.isAlive and i.PawnBox.colliderect(self.BlueEnemyCheck):
+                    self.MF = False
+                    break  # No need to keep checking
+        
+            if self.selected and mouseDown:
+                # Move one step forward
+                self.one_step = pygame.Rect(self.pos.x, self.pos.y - 100, self.size.x, self.size.y)
+                self.two_step = pygame.Rect(self.pos.x, self.pos.y - 200, self.size.x, self.size.y)
+                self.TopLeft = pygame.Rect(self.pos.x-100, self.pos.y-100, 100, 100)
+                self.TopRight = pygame.Rect(self.pos.x+100, self.pos.y-100, 100, 100)
 
-                elif i.PawnBox.colliderect(self.TopRight):
-                    if self.TopRight.collidepoint(mxpos, mypos) and mouseDown:
-                        self.pos.y -= 100
-                        self.pos.x += 100
-                        self.selected = False
-                        i.isAlive = False
-                        return True
+                for i in enemies:
+                    if i.PawnBox.colliderect(self.TopLeft):
+                        if self.TopLeft.collidepoint(mxpos, mypos) and mouseDown:
+                            self.pos.y -= 100
+                            self.pos.x -= 100
+                            self.selected = False
+                            i.isAlive = False
+                            return True
 
-            if self.FirstMove and self.two_step.collidepoint(mxpos, mypos):
-                self.pos.y -= 200
-                self.FirstMove = False
-                self.selected = False
-                return True
-            elif self.one_step.collidepoint(mxpos, mypos):
-                self.pos.y -= 100
-                self.FirstMove = False
-                self.selected = False
-                return True
+                    elif i.PawnBox.colliderect(self.TopRight):
+                        if self.TopRight.collidepoint(mxpos, mypos) and mouseDown:
+                            self.pos.y -= 100
+                            self.pos.x += 100
+                            self.selected = False
+                            i.isAlive = False
+                            return True
 
-        return False
+                if self.MF and self.FirstMove and self.two_step.collidepoint(mxpos, mypos):
+                    self.pos.y -= 200
+                    self.FirstMove = False
+                    self.selected = False
+                    return True
+                elif self.MF and self.one_step.collidepoint(mxpos, mypos):
+                    self.pos.y -= 100
+                    self.FirstMove = False
+                    self.selected = False
+                    return True
+
+            return False
 
     def BlueDraw(self, screen):
         self.update_rect()
         if self.isAlive:
             screen.blit(BluePawnPiece, self.pos)
+    
+    #Black Pawn----------------------------------------------------
 
     def BlackMove(self, mxpos, mypos, mouseDown, enemies):
         self.update_rect()
-        if self.PawnBox.collidepoint(mxpos, mypos) and mouseDown:
-            self.selected = True
-            return False
+        if self.isAlive:
+            if self.PawnBox.collidepoint(mxpos, mypos) and mouseDown:
+                self.selected = True
 
-        if self.selected and mouseDown:
-            self.one_step = pygame.Rect(self.pos.x, self.pos.y + 100, self.size.x, self.size.y)
-            self.two_step = pygame.Rect(self.pos.x, self.pos.y + 200, self.size.x, self.size.y)
-            self.BottomLeft = pygame.Rect(self.pos.x-100, self.pos.y+100, 100, 100)
-            self.BottomRight = pygame.Rect(self.pos.x+100, self.pos.y+100, 100, 100)
-
+                return False
+            
             for i in enemies:
-                if i.PawnBox.colliderect(self.BottomLeft):
-                    if self.BottomLeft.collidepoint(mxpos, mypos) and mouseDown:
-                        self.pos.y += 100
-                        self.pos.x -= 100
-                        self.selected = False
-                        i.isAlive = False
-                        return True
+                if i.isAlive and i.PawnBox.colliderect(self.BlackEnemyCheck):
+                    self.MF = False
+                    break  # No need to keep checking
 
-                elif i.PawnBox.colliderect(self.BottomRight):
-                    if self.BottomRight.collidepoint(mxpos, mypos) and mouseDown:
-                        self.pos.y += 100
-                        self.pos.x += 100
-                        self.selected = False
-                        i.isAlive = False
-                        return True
+            if self.selected and mouseDown:
+                self.one_step = pygame.Rect(self.pos.x, self.pos.y + 100, self.size.x, self.size.y)
+                self.two_step = pygame.Rect(self.pos.x, self.pos.y + 200, self.size.x, self.size.y)
+                self.BottomLeft = pygame.Rect(self.pos.x-100, self.pos.y+100, 100, 100)
+                self.BottomRight = pygame.Rect(self.pos.x+100, self.pos.y+100, 100, 100)
 
-            if self.FirstMove and self.two_step.collidepoint(mxpos, mypos):
-                self.pos.y += 200
-                self.FirstMove = False
-                self.selected = False
-                return True
-            elif self.one_step.collidepoint(mxpos, mypos):
-                self.pos.y += 100
-                self.FirstMove = False
-                self.selected = False
-                return True
 
-        return False
+                for i in enemies:
+                    if i.PawnBox.colliderect(self.BottomLeft):
+                        if self.BottomLeft.collidepoint(mxpos, mypos) and mouseDown:
+                            self.pos.y += 100
+                            self.pos.x -= 100
+                            self.selected = False
+                            i.isAlive = False
+                            return True
+
+                    elif i.PawnBox.colliderect(self.BottomRight):
+                        if self.BottomRight.collidepoint(mxpos, mypos) and mouseDown:
+                            self.pos.y += 100
+                            self.pos.x += 100
+                            self.selected = False
+                            i.isAlive = False
+                            return True
+
+                if self.MF and self.FirstMove and self.two_step.collidepoint(mxpos, mypos):
+                    self.pos.y += 200
+                    self.FirstMove = False
+                    self.selected = False
+                    return True
+                elif self.MF and self.one_step.collidepoint(mxpos, mypos):
+                    self.pos.y += 100
+                    self.FirstMove = False
+                    self.selected = False
+                    return True
+
+            return False
 
     def Blackdraw(self, screen):
         self.update_rect()
@@ -146,12 +168,13 @@ class Bishop(piece):
     def update_rect(self):
         self.BishopBox = pygame.Rect(self.pos, self.size)
 
+    #Blue Bishop
     def BlueDraw(self, screen):
         self.update_rect()
         if self.isAlive:
             screen.blit(BlueBishop, (self.pos.x + 10, self.pos.y))
     
-    def BlueMove(self, mxpos, mypos, MousePos,  enemies):
+    def BlueMove(self, mxpos, mypos, MousePos, enemies, map):
         pass
 
     def BlackDraw(self, screen):
