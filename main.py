@@ -16,10 +16,13 @@ def main():
 
 
     #pieces
+
     BluePawns = [Pawn((10,600), (80, 80)), Pawn((110,600), (80, 80)), Pawn((210,600), (80, 80)), Pawn((310,600), (80, 80)), Pawn((410,600), (80, 80)), Pawn((510,600), (80, 80)), Pawn((610,600), (80, 80)), Pawn((710,600), (80, 80))]
     BlackPawns = [Pawn((10,100), (80, 80)), Pawn((110,100), (80, 80)), Pawn((210,100), (80, 80)), Pawn((310,100), (80, 80)), Pawn((410,100), (80, 80)), Pawn((510,100), (80, 80)), Pawn((610,100), (80, 80)), Pawn((710,100), (80, 80))]
     BlueBishops = [Bishop((200, 700), (80, 96)), Bishop((500, 700), (80, 96))]
     BlackBishops = [Bishop((200, 0), (80, 96)), Bishop((500, 0), (80, 96))]
+
+    AllPieces = [BluePawns, BlackPawns, BlueBishops, BlackBishops]
     #Mouse variables
     mxpos = 0
     mypos = 0
@@ -62,21 +65,43 @@ def main():
 
         #print(BluePawns[0].PawnBox)
         #physics---------------------------------------------------
+
+        #BluePieceMovement ##############################################################################
         if turn == "Blue":
+            for i in BlackPawns:
+                i.selected = False
+            for i in BlackBishops:
+                i.selected = False
+
+
+            #pawns------------------------------------------------------------------------
             for i in BluePawns:
                 #i.BlueCaptures(mouseX, mouseY, mouseDown, BlackPawns)
-                if i.BlueMove(mouseX, mouseY, mouseDown, BlackPawns):
-                    for j in BluePawns:
-                        if j != i:
-                            j.selecting = False
+                if i.BlueMove(mouseX, mouseY, mouseDown, BlackPawns, BluePawns):
                     turn = "Black"
                     break
+
+            #Bishops----------------------------------------------------------------------
+            for i in BlueBishops:
+                if i.BlueMove(mouseX, mouseY, mouseDown, AllPieces):
+                    turn = "Black"
+                    break
+
+        #BlackPiceMovement ####################################################################################
         if turn == "Black":
+            for i in BluePawns:
+                i.selected = False
+            for i in BlueBishops:
+                i.selecting = False
+            #pawns-------------------------------------------------------------------------
             for i in BlackPawns:
-                if i.BlackMove(mouseX, mouseY, mouseDown, BluePawns):
-                    for j in BlackPawns:
-                        if j != i:
-                            j.selecting = False
+                if i.BlackMove(mouseX, mouseY, mouseDown, BluePawns, BlackPawns):
+                    turn = "Blue"
+                    break
+
+            #Bishops -------------------------------------------------------------------------
+            for i in BlackBishops:
+                if i.BlackMove(mouseX, mouseY, mouseDown, AllPieces):
                     turn = "Blue"
                     break
         #Render section
@@ -86,11 +111,13 @@ def main():
 
         Map(screen)
        
+       #Pawns
         for i in BluePawns:
             i.BlueDraw(screen)
         for i in BlackPawns:
             i.Blackdraw(screen)
 
+        #Bishops
         for j in BlueBishops:
             j.BlueDraw(screen)
         for j in BlackBishops:
