@@ -48,9 +48,10 @@ class Pawn(piece):
 
     #blue pawn------------------------------------------------
 
-    def BlueMove(self, mxpos, mypos, mouseDown, enemies):
+    def BlueMove(self, mxpos, mypos, mouseDown, enemies, BluePawns):
         self.update_rect()
         if self.isAlive:
+
             if self.PawnBox.collidepoint(mxpos, mypos) and mouseDown:
                 self.selected = True
                 return False
@@ -104,9 +105,10 @@ class Pawn(piece):
     
     #Black Pawn----------------------------------------------------
 
-    def BlackMove(self, mxpos, mypos, mouseDown, enemies):
+    def BlackMove(self, mxpos, mypos, mouseDown, enemies, BlackPawns):
         self.update_rect()
         if self.isAlive:
+
             if self.PawnBox.collidepoint(mxpos, mypos) and mouseDown:
                 self.selected = True
 
@@ -168,16 +170,80 @@ class Bishop(piece):
     def update_rect(self):
         self.BishopBox = pygame.Rect(self.pos, self.size)
 
-    #Blue Bishop
+    #Blue Bishop ---------------------------------------------------
     def BlueDraw(self, screen):
         self.update_rect()
         if self.isAlive:
             screen.blit(BlueBishop, (self.pos.x + 10, self.pos.y))
     
-    def BlueMove(self, mxpos, mypos, MousePos, enemies, map):
-        pass
+    def BlueMove(self, mxpos, mypos, MouseDown, AllPieces):
+        self.update_rect()
 
+        if self.BishopBox.collidepoint(mxpos, mypos) and MouseDown:
+            self.selecting = True
+            return False
+        
+        if self.selecting and MouseDown:
+            x1 = int(self.pos.x//100)
+            y1 = int(self.pos.y//100)
+            x2 = int(mxpos // 100)
+            y2 = int(mypos//100)
+            
+
+            if abs(x2 - x1) == abs(y2 - y1) and abs(x2 - x1) > 0:
+                xStep = 1 if x2 > x1 else -1
+                yStep = 1 if y2 > y1 else -1
+
+                x, y = x1 + xStep, y1 + yStep
+                while (x,y) != (x2, y2):
+                    for i in AllPieces:
+                        for j in i:
+                            if j.isAlive and int(j.pos.x // 100) == x and int(j.pos.y // 100) ==y:
+                                return False
+                    x += xStep
+                    y += yStep
+
+                    self.pos.x = x2 * 100
+                    self.pos.y = y2 * 100
+                    self.selecting = False
+                    return True
+        return False
+
+    #Black Bishop ----------------------------------------------------
     def BlackDraw(self, screen):
         self.update_rect()
         if self.isAlive:
             screen.blit(BlackBishop, (self.pos.x + 10, self.pos.y))
+
+    def BlackMove(self, mxpos, mypos, MouseDown, AllPieces):
+        self.update_rect()
+
+        if self.BishopBox.collidepoint(mxpos, mypos) and MouseDown:
+            self.selecting = True
+            return False
+        
+        if self.selecting and MouseDown:
+            x1 = int(self.pos.x//100)
+            y1 = int(self.pos.y//100)
+            x2 = int(mxpos // 100)
+            y2 = int(mypos // 100)
+            
+
+            if abs(x2 - x1) == abs(y2 - y1) and abs(x2 - x1) > 0:
+                xStep = 1 if x2 > x1 else -1
+                yStep = 1 if y2 > y1 else -1
+
+                x, y = x1 + xStep, y1 + yStep
+                while (x,y) != (x2, y2):
+                    for i in AllPieces:
+                        for j in i:
+                            if j.isAlive and int(j.pos.x // 100) == x and int(j.pos.y // 100) ==y:
+                                return False
+                    x += xStep
+                    y += yStep
+
+                    self.pos.x = x2 * 100
+                    self.pos.y = y2 * 100
+                    self.selecting = False
+                    return True
+        return False
