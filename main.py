@@ -1,7 +1,7 @@
 import pygame
 import sys
 from map import Map
-from pieces import Pawn, Bishop
+from pieces import Pawn, Bishop, Knight
 
 
 
@@ -17,12 +17,19 @@ def main():
 
     #pieces
 
+    #---------------------------------------------------Pawns---------------------------------------------------#
     BluePawns = [Pawn((10,600), (80, 80)), Pawn((110,600), (80, 80)), Pawn((210,600), (80, 80)), Pawn((310,600), (80, 80)), Pawn((410,600), (80, 80)), Pawn((510,600), (80, 80)), Pawn((610,600), (80, 80)), Pawn((710,600), (80, 80))]
     BlackPawns = [Pawn((10,100), (80, 80)), Pawn((110,100), (80, 80)), Pawn((210,100), (80, 80)), Pawn((310,100), (80, 80)), Pawn((410,100), (80, 80)), Pawn((510,100), (80, 80)), Pawn((610,100), (80, 80)), Pawn((710,100), (80, 80))]
+    #-------------------------------Bishops-------------------------------------------#
     BlueBishops = [Bishop((200, 700), (80, 96)), Bishop((500, 700), (80, 96))]
     BlackBishops = [Bishop((200, 0), (80, 96)), Bishop((500, 0), (80, 96))]
+    #-----------------------------------Knights------------------------------------------#
+    BlueKnights = [Knight((100, 700), (80, 96)), Knight ((600, 700), (80, 96))]
+    BlackKnights = [Knight((100, 0), (80,96)), Knight((600, 0), (80, 96))]
 
-    AllPieces = [BluePawns, BlackPawns, BlueBishops, BlackBishops]
+    AllPieces = [BluePawns, BlackPawns, BlueBishops, BlackBishops, BlueKnights, BlackKnights]
+    BluePieces = [BluePawns, BlueBishops, BlueKnights]
+    BlackPieces = [BlackPawns, BlackBishops, BlackKnights]
     #Mouse variables
     mxpos = 0
     mypos = 0
@@ -87,6 +94,12 @@ def main():
                     turn = "Black"
                     break
 
+            #Knights-----------------------------------------------------------------------
+            for i in BlueKnights:
+                if i.BlueMove(mouseX, mouseY, mouseDown, BlackPieces, BluePieces):
+                    turn = "Black"
+                    break
+
         #BlackPiceMovement ####################################################################################
         if turn == "Black":
             for i in BluePawns:
@@ -122,6 +135,12 @@ def main():
             j.BlueDraw(screen)
         for j in BlackBishops:
             j.BlackDraw(screen)
+
+        #Knights
+        for k in BlueKnights:
+            k.BlueDraw(screen)
+        for k in BlackKnights:
+            k.BlackDraw(screen)
 
 
         pygame.display.flip()
