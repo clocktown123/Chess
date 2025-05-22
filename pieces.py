@@ -49,6 +49,13 @@ BlueKnight.set_colorkey((255, 0, 255))
 BlackKnight = pygame.image.load(resource_path("ChessImages/BlackKnight.png"))
 BlackKnight.set_colorkey((255, 0, 255))
 
+#-----------------------------------Rooks-----------------------------------#
+BlueRook = pygame.image.load(resource_path("ChessImages/BlueRook.png"))
+BlueRook.set_colorkey((255, 0, 255))
+
+BlackRook = pygame.image.load(resource_path("ChessImages/BlackRook.png"))
+BlackRook.set_colorkey((255, 0, 255))
+
 
 
 ################################## Parent class ####################################
@@ -63,6 +70,7 @@ class piece:
     def draw(self, screen):
         raise NotImplementedError("must be overridden by subclass")
 
+########################################### PAWNS ##################################################
 
 # ---------- pawn --------------------------------------------------------------
 class Pawn(piece):
@@ -127,7 +135,7 @@ class Pawn(piece):
             screen.blit(BluePawnPiece, self.pos)
 
     # ---------------- black pawn ----------------------------------------------
-    def BlackMove(self, mxpos, mypos, mouseDown, enemies, BlackPawns):
+    def BlackMove(self, mxpos, mypos, mouseDown, enemies):
         self.update_rect()
         if not self.isAlive:
             return False
@@ -172,6 +180,7 @@ class Pawn(piece):
         if self.isAlive:
             screen.blit(BlackPawnPiece, self.pos)
 
+################################################ BISHOPS ########################################################
 
 # ---------- bishop ------------------------------------------------------------
 class Bishop(piece):
@@ -278,6 +287,8 @@ class Bishop(piece):
 
         return False
     
+######################################################## KNIGHTS ####################################################################
+    
 class Knight(piece):
     def __init__(self, position, Size):
         super().__init__(position, Size)
@@ -323,32 +334,118 @@ class Knight(piece):
         if self.selecting and mouseDown:
             #print("hit")
             
+            
             if self.TopMLeft.collidepoint(mxpos, mypos) and mouseDown:
-                print("hit")
-                for i in Enemies:
-                    for j in i:
-                        if self.KnightBox.colliderect(j.pos.x, j.pos.y, 100, 100):
-                            print("yep")
-                            self.pos.x = self.TopMLeft.x
-                            self.pos.y = self.TopMLeft.y
-                            self.selecting = False
-                            j.isAlive = False
-                            return True
-                        else:
-                            self.pos.x = self.TopMLeft.x
-                            self.pos.y = self.TopMLeft.y
-                            self.selecting = False
-                            return True
-        return False
-                # for i in Friends:
-                #     for j in i:
-                #         if square_occupied(j.pos.x, j.pos.y, Friends):
-                #             print("true")
+                x, y = int(mxpos // 100), int(mypos // 100)
+            elif self.TopFLeft.collidepoint(mxpos, mypos) and mouseDown:
+                x, y = int(mxpos // 100), int(mypos // 100)
+            elif self.TopMRight.collidepoint(mxpos, mypos) and mouseDown:
+                x, y = int(mxpos // 100), int(mypos // 100)
+            elif self.TopFRight.collidepoint(mxpos, mypos) and mouseDown:
+                x, y = int(mxpos // 100), int(mypos // 100)
+            elif self.BottomMLeft.collidepoint(mxpos, mypos) and mouseDown:
+                x, y = int(mxpos // 100), int(mypos // 100)
+            elif self.BottomFLeft.collidepoint(mxpos, mypos) and mouseDown:
+                x, y = int(mxpos // 100), int(mypos // 100)
+            elif self.BottomMRight.collidepoint(mxpos, mypos) and mouseDown:
+                x, y = int(mxpos // 100), int(mypos // 100)
+            elif self.BottomFRight.collidepoint(mxpos, mypos) and mouseDown:
+                x, y = int(mxpos // 100), int(mypos // 100)
+            else:
+                self.selecting = False
+                return False
 
+            if square_occupied(x, y, Friends):
+                self.selecting = False
+                return False
+                
+            dest_piece = square_occupied(x, y, Enemies)
+            if dest_piece:
+                if dest_piece in Friends[2]:  # black pieces list is second
+                    return False
+                dest_piece.isAlive = False
+
+            self.pos.x = x * 100
+            self.pos.y = y * 100
+            self.selecting = False
+            return True
+        return False
     ######################## Black Knight ############################
 
     def BlackDraw(self, screen):
         self.update_rect()
         if self.isAlive:
             screen.blit(BlackKnight, (self.pos.x+10, self.pos.y))
+
+    def BlackMove(self, mxpos, mypos, mouseDown, Enemies, Friends):
+        self.update_rect()
+
+        if self.KnightBox.collidepoint(mxpos, mypos) and mouseDown:
+            self.selecting = True
+            return False
+        
+        if self.selecting and mouseDown:
+            #print("hit")
+            
+            
+            if self.TopMLeft.collidepoint(mxpos, mypos) and mouseDown:
+                x, y = int(mxpos // 100), int(mypos // 100)
+            elif self.TopFLeft.collidepoint(mxpos, mypos) and mouseDown:
+                x, y = int(mxpos // 100), int(mypos // 100)
+            elif self.TopMRight.collidepoint(mxpos, mypos) and mouseDown:
+                x, y = int(mxpos // 100), int(mypos // 100)
+            elif self.TopFRight.collidepoint(mxpos, mypos) and mouseDown:
+                x, y = int(mxpos // 100), int(mypos // 100)
+            elif self.BottomMLeft.collidepoint(mxpos, mypos) and mouseDown:
+                x, y = int(mxpos // 100), int(mypos // 100)
+            elif self.BottomFLeft.collidepoint(mxpos, mypos) and mouseDown:
+                x, y = int(mxpos // 100), int(mypos // 100)
+            elif self.BottomMRight.collidepoint(mxpos, mypos) and mouseDown:
+                x, y = int(mxpos // 100), int(mypos // 100)
+            elif self.BottomFRight.collidepoint(mxpos, mypos) and mouseDown:
+                x, y = int(mxpos // 100), int(mypos // 100)
+            else:
+                self.selecting = False
+                return False
+
+            if square_occupied(x, y, Friends):
+                self.selecting = False
+                return False
+                
+            dest_piece = square_occupied(x, y, Enemies)
+            if dest_piece:
+                if dest_piece in Friends[2]:  # black pieces list is second
+                    return False
+                dest_piece.isAlive = False
+
+            self.pos.x = x * 100
+            self.pos.y = y * 100
+            self.selecting = False
+            return True
+        return False
+    
+####################################################### ROOKS ################################################################
+
+class Rook(piece):
+    def __init__(self, position, Size):
+        super().__init__(position, Size)
+        self.RookBox = pygame.Rect(self.pos, self.size)
+
+    def update_rect(self):
+        self.RookBox = pygame.Rect(self.pos, self.size)
+
+    #------------------------ Blue Rooks ---------------------------#
+
+    def BlueDraw(self, screen):
+        self.update_rect()
+        if self.isAlive:
+            screen.blit(BlueRook, (self.pos.x + 10, self.pos.y, self.size.x, self.size.y))
+    
+
+    #------------------------ Black Rooks ---------------------------#
+
+    def BlackDraw(self, screen):
+        self.update_rect()
+        if self.isAlive:
+            screen.blit(BlackRook, (self.pos.x + 10, self.pos.y, self.size.x, self.size.y))
     
