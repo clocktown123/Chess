@@ -103,6 +103,12 @@ def main():
                     turn = "Black"
                     break
 
+            #Rooks-----------------------------------------------------------------------
+            for i in BlueRooks:
+                if i.BlueMove(mouseX, mouseY, mouseDown, AllPieces):
+                    turn = "Black"
+                    break
+
         #BlackPiceMovement ####################################################################################
         if turn == "Black":
             for i in BluePawns:
