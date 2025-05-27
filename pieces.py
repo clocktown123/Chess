@@ -250,7 +250,7 @@ class Bishop(piece):
             dest_piece = square_occupied(tx, ty, AllPieces)
             if dest_piece:
                 # friendly piece blocks move
-                if dest_piece in AllPieces[0]:  # blue pieces list is first
+                if dest_piece in AllPieces[0] or dest_piece in AllPieces[2] or dest_piece in AllPieces[4]:  # blue pieces list is first
                     return False
                 dest_piece.isAlive = False      # capture enemy
 
@@ -296,7 +296,7 @@ class Bishop(piece):
 
             dest_piece = square_occupied(tx, ty, AllPieces)
             if dest_piece:
-                if dest_piece in AllPieces[1]:  # black pieces list is second
+                if dest_piece in AllPieces[1] or dest_piece in AllPieces[3] or dest_piece in AllPieces[5]:  # black pieces list is second
                     return False
                 dest_piece.isAlive = False
 
@@ -450,13 +450,13 @@ class Rook(piece):
     def __init__(self, position, Size):
         super().__init__(position, Size)
         self.RookBox = pygame.Rect(self.pos, self.size)
-        self.RookBoxX = pygame.Rect(self.pos.x-800, self.pos.y, 2000, 100)
-        self.RookBoxY = pygame.Rect(self.pos.x, self.pos.y - 800, 100, 2000)
+        self.RookBoxX = pygame.Rect(self.pos.x-8000, self.pos.y, 20000, 100)
+        self.RookBoxY = pygame.Rect(self.pos.x, self.pos.y - 8000, 100, 20000)
 
     def update_rect(self):
         self.RookBox = pygame.Rect(self.pos, self.size)
-        self.RookBoxX = pygame.Rect(self.pos.x-800, self.pos.y, 2000, 100)
-        self.RookBoxY = pygame.Rect(self.pos.x, self.pos.y - 800, 100, 2000)
+        self.RookBoxX = pygame.Rect(self.pos.x-8000, self.pos.y, 20000, 100)
+        self.RookBoxY = pygame.Rect(self.pos.x, self.pos.y - 8000, 100, 20000)
     #------------------------ Blue Rooks ---------------------------#
 
     def BlueDraw(self, screen):
@@ -464,24 +464,50 @@ class Rook(piece):
         if self.isAlive:
             screen.blit(BlueRook, (self.pos.x + 10, self.pos.y, self.size.x, self.size.y))
 
-    def BlueMove(self, mxpos, mypos, mouseDown):
+    def BlueMove(self, mxpos, mypos, mouseDown, AllPieces):
         self.update_rect()
-        x, y = int(self.pos.x // 100), int(self.pos.y // 100)
 
         if self.RookBox.collidepoint(mxpos, mypos) and mouseDown:
             self.selecting = True
             return False
-        
-        if self.selecting == True and mouseDown:
-            if self.RookBoxX.collidepoint(mxpos, mypos):
-                    self.pos.x = int(mxpos//100)*100
-                    self.selecting = False
-                    return True
-            elif self.RookBoxY.collidepoint(mxpos, mypos):
-                    self.pos.y = int(mypos//100)*100
-                    self.selecting = False
-                    return True
-    
+
+        if self.selecting and mouseDown:
+            sx, sy = int(self.pos.x // 100), int(self.pos.y // 100)
+            tx, ty = int(mxpos // 100), int(mypos // 100)
+
+            dx, dy = tx - sx, ty - sy
+
+            # Must move in a straight line (no diagonals)
+            if dx != 0 and dy != 0:
+                self.selecting = False
+                return False
+
+            #ai did the steps section
+            step_x = 0 if dx == 0 else (1 if dx > 0 else -1)
+            step_y = 0 if dy == 0 else (1 if dy > 0 else -1)
+
+            # Check for pieces in the way
+            x, y = sx + step_x, sy + step_y
+            while (x, y) != (tx, ty):
+                if square_occupied(x, y, AllPieces):
+                    return False
+                x += step_x
+                y += step_y
+
+            dest_piece = square_occupied(tx, ty, AllPieces)
+            if dest_piece:
+                # blue pieces are assumed to be AllPieces[0]
+                if dest_piece in AllPieces[0] or dest_piece in AllPieces[2] or dest_piece in AllPieces[4]:
+                    return False
+                dest_piece.isAlive = False  # capture
+
+            self.pos.x = tx * 100
+            self.pos.y = ty * 100
+            self.selecting = False
+            return True
+
+        return False
+
 
     #------------------------ Black Rooks ---------------------------#
 
@@ -490,3 +516,46 @@ class Rook(piece):
         if self.isAlive:
             screen.blit(BlackRook, (self.pos.x + 10, self.pos.y, self.size.x, self.size.y))
     
+    def BlackMove(self, mxpos, mypos, mouseDown, AllPieces):
+        self.update_rect()
+
+        if self.RookBox.collidepoint(mxpos, mypos) and mouseDown:
+            self.selecting = True
+            return False
+
+        if self.selecting and mouseDown:
+            sx, sy = int(self.pos.x // 100), int(self.pos.y // 100)
+            tx, ty = int(mxpos // 100), int(mypos // 100)
+
+            dx, dy = tx - sx, ty - sy
+
+            # Must move in a straight line (no diagonals)
+            if dx != 0 and dy != 0:
+                self.selecting = False
+                return False
+
+            #ai did the steps section
+            step_x = 0 if dx == 0 else (1 if dx > 0 else -1)
+            step_y = 0 if dy == 0 else (1 if dy > 0 else -1)
+
+            # Check for pieces in the way
+            x, y = sx + step_x, sy + step_y
+            while (x, y) != (tx, ty):
+                if square_occupied(x, y, AllPieces):
+                    return False
+                x += step_x
+                y += step_y
+
+            dest_piece = square_occupied(tx, ty, AllPieces)
+            if dest_piece:
+                # blue pieces are assumed to be AllPieces[0]
+                if dest_piece in AllPieces[1] or dest_piece in AllPieces[3] or dest_piece in AllPieces[5]:
+                    return False
+                dest_piece.isAlive = False  # capture
+
+            self.pos.x = tx * 100
+            self.pos.y = ty * 100
+            self.selecting = False
+            return True
+
+        return False
