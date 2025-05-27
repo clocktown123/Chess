@@ -132,6 +132,12 @@ def main():
                 if i.BlackMove(mouseX, mouseY, mouseDown, BluePieces, BlackPieces):
                     turn = "Blue"
                     break
+
+            #Rooks-----------------------------------------------------------------------
+            for i in BlackRooks:
+                if i.BlackMove(mouseX, mouseY, mouseDown, AllPieces):
+                    turn = "Blue"
+                    break
         #Render section
        
         screen.fill((0, 0, 0))
@@ -157,7 +163,7 @@ def main():
         for k in BlackKnights:
             k.BlackDraw(screen)
 
-        #Knights
+        #Rooks
         for g in BlueRooks:
             g.BlueDraw(screen)
         for g in BlackRooks:
