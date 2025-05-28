@@ -1,7 +1,7 @@
 import pygame
 import sys
 from map import Map
-from pieces import Pawn, Bishop, Knight, Rook
+from pieces import Pawn, Bishop, Knight, Rook, king
 
 
 
@@ -29,10 +29,13 @@ def main():
     #-----------------------------------Rooks------------------------------------------#
     BlueRooks = [Rook((0, 700), (80, 96)), Rook ((700, 700), (80, 96))]
     BlackRooks = [Rook((0, 0), (80,96)), Rook((700, 0), (80, 96))]
+    #-----------------------------------Rooks------------------------------------------#
+    BlueKing = [king((400, 700), (80, 96))]
+    BlackKing = [king((400, 0), (80,96))]
 
-    AllPieces = [BluePawns, BlackPawns, BlueBishops, BlackBishops, BlueKnights, BlackKnights]
-    BluePieces = [BluePawns, BlueBishops, BlueKnights]
-    BlackPieces = [BlackPawns, BlackBishops, BlackKnights]
+    AllPieces = [BluePawns, BlackPawns, BlueBishops, BlackBishops, BlueKnights, BlackKnights, BlueRooks, BlackRooks]
+    BluePieces = [BluePawns, BlueBishops, BlueKnights, BlueRooks]
+    BlackPieces = [BlackPawns, BlackBishops, BlackKnights, BlackRooks]
     #Mouse variables
     mxpos = 0
     mypos = 0
@@ -108,6 +111,11 @@ def main():
                 if i.BlueMove(mouseX, mouseY, mouseDown, AllPieces):
                     turn = "Black"
                     break
+            #King-----------------------------------------------------------------------
+            for i in BlueKing:
+                if i.BlueMove(mouseX, mouseY, mouseDown, AllPieces, BluePieces):
+                    turn = "Black"
+                    break
 
         #BlackPiceMovement ####################################################################################
         if turn == "Black":
@@ -168,6 +176,12 @@ def main():
             g.BlueDraw(screen)
         for g in BlackRooks:
             g.BlackDraw(screen)
+
+        #Kings
+        for t in BlueKing:
+            t.BlueDraw(screen)
+        for t in BlackKing:
+            t.BlackDraw(screen)
 
 
         pygame.display.flip()
