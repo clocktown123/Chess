@@ -56,6 +56,13 @@ BlueRook.set_colorkey((255, 0, 255))
 BlackRook = pygame.image.load(resource_path("ChessImages/BlackRook.png"))
 BlackRook.set_colorkey((255, 0, 255))
 
+#-----------------------------------Kings-----------------------------------#
+BlueKing = pygame.image.load(resource_path("ChessImages/BlueKing.png"))
+BlueKing.set_colorkey((255, 0, 255))
+
+BlackKing = pygame.image.load(resource_path("ChessImages/BlackKing.png"))
+BlackKing.set_colorkey((255, 0, 255))
+
 
 
 ################################## Parent class ####################################
@@ -250,7 +257,7 @@ class Bishop(piece):
             dest_piece = square_occupied(tx, ty, AllPieces)
             if dest_piece:
                 # friendly piece blocks move
-                if dest_piece in AllPieces[0] or dest_piece in AllPieces[2] or dest_piece in AllPieces[4]:  # blue pieces list is first
+                if dest_piece in AllPieces[0] or dest_piece in AllPieces[2] or dest_piece in AllPieces[4] or dest_piece in AllPieces[6]:  # blue pieces list is first
                     return False
                 dest_piece.isAlive = False      # capture enemy
 
@@ -296,7 +303,7 @@ class Bishop(piece):
 
             dest_piece = square_occupied(tx, ty, AllPieces)
             if dest_piece:
-                if dest_piece in AllPieces[1] or dest_piece in AllPieces[3] or dest_piece in AllPieces[5]:  # black pieces list is second
+                if dest_piece in AllPieces[1] or dest_piece in AllPieces[3] or dest_piece in AllPieces[5] or dest_piece in AllPieces[7]:  # black pieces list is second
                     return False
                 dest_piece.isAlive = False
 
@@ -497,7 +504,7 @@ class Rook(piece):
             dest_piece = square_occupied(tx, ty, AllPieces)
             if dest_piece:
                 # blue pieces are assumed to be AllPieces[0]
-                if dest_piece in AllPieces[0] or dest_piece in AllPieces[2] or dest_piece in AllPieces[4]:
+                if dest_piece in AllPieces[0] or dest_piece in AllPieces[2] or dest_piece in AllPieces[4] or dest_piece in AllPieces[6]:
                     return False
                 dest_piece.isAlive = False  # capture
 
@@ -549,7 +556,7 @@ class Rook(piece):
             dest_piece = square_occupied(tx, ty, AllPieces)
             if dest_piece:
                 # blue pieces are assumed to be AllPieces[0]
-                if dest_piece in AllPieces[1] or dest_piece in AllPieces[3] or dest_piece in AllPieces[5]:
+                if dest_piece in AllPieces[1] or dest_piece in AllPieces[3] or dest_piece in AllPieces[5] or dest_piece in AllPieces[7]:
                     return False
                 dest_piece.isAlive = False  # capture
 
@@ -559,3 +566,77 @@ class Rook(piece):
             return True
 
         return False
+
+
+class king(piece):
+    def __init__(self, position, Size):
+        super().__init__(position, Size)
+        self.KingBox = pygame.Rect(self.pos, self.size)
+        self.KingMBox = pygame.Rect(self.pos.x - 100, self.pos.y - 100, 300, 300)
+        
+
+    def update_rect(self):
+        self.KingBox = pygame.Rect(self.pos, self.size)
+        self.KingMBox = pygame.Rect(self.pos.x - 100, self.pos.y - 100, 300, 300)
+    #--------------------------------Blue King-------------------------------#
+    def BlueDraw(self, screen):
+        self.update_rect()
+        if self.isAlive:
+            screen.blit(BlueKing, (self.pos.x +10, self.pos.y, self.size.x, self.size.y))
+
+    def BlueMove(self, mxpos, mypos, mouseDown, AllPieces, friends):
+        self.update_rect()
+
+        if self.KingBox.collidepoint(mxpos, mypos):
+            self.selecting = True
+            return False
+    
+        if self.selecting and mouseDown:
+            sx, sy = int(self.pos.x // 100), int(self.pos.y // 100)
+            tx, ty = int(mxpos // 100), int(mypos // 100)
+
+            self.TopCheck = pygame.Rect((tx*100), (ty*100)-100, 100, 100)
+            self.BottomCheck = pygame.Rect((tx*100), (ty*100)+100, 100, 100)
+            self.LeftCheck = pygame.Rect((tx*100)-100, (ty*100), 100, 100)
+            self.RightCheck = pygame.Rect((tx*100)+100, (ty*100), 100, 100)
+
+            self.TopRight = pygame.Rect((tx*100)+100, (ty*100)-100, 100, 100)
+            self.TopLeft = pygame.Rect((tx*100)-100, (ty*100)-100, 100, 100)
+            self.BottomRight = pygame.Rect((tx*100)+100, (ty*100)+100, 100, 100)
+            self.BottomLeft = pygame.Rect((tx*100)-100, (ty*100)+100, 100, 100)
+
+            
+            if square_occupied(tx, ty, friends):
+                print("test")
+                self.selecting = False
+                return False
+
+            if self.KingMBox.collidepoint(mxpos, mypos):
+                #print(self.TopRight)
+                # print(self.TopLeft)
+                # print(self.BottomRight)
+                # print(self.BottomLeft)
+                if self.TopRight.collidepoint(mxpos, mypos):
+                    print("right")
+                    for j in AllPieces:
+                        for i in j:
+                            if self.TopCheck.colliderect(i.pos.x, i.pos.y, i.size.x, i.size.y) and self.RightCheck.colliderect(i.pos.x, i.pos.y, i.size.x, i.size.y):
+                                print("print")
+                                self.selecting = False
+                                return False
+
+                    self.pos.x = tx*100
+                    self.pos.y = ty*100
+                    return True
+        return False
+            
+
+
+    #---------------------------------Black King-------------------------------#
+    def BlackDraw(self, screen):
+        self.update_rect()
+        if self.isAlive:
+            screen.blit(BlackKing, (self.pos.x +10, self.pos.y, self.size.x, self.size.y))
+
+    
+
